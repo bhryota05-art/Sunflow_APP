@@ -16,7 +16,17 @@ import uuid
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {
+    "origins": [
+        "https://stuflow-web.netlify.app",  # your frontend
+        "http://localhost:5500",            # local preview
+        "http://localhost:5173"             # Vite (if used)
+    ],
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True
+}})
+
 
 # -----------------------
 # HOME ROUTE (Fixes 404)
