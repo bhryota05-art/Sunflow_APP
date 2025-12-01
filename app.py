@@ -35,8 +35,12 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
+    # Convert postgres:// → postgresql+psycopg:// (required for psycopg3)
     if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+    elif DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
+
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 else:
     # Local MySQL for development
@@ -44,6 +48,7 @@ else:
         f"mysql+mysqlconnector://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@"
         f"{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
     )
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
